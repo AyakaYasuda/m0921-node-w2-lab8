@@ -1,14 +1,20 @@
-const { ObjectId } = require('mongodb')
-const { InitiateDatabase } = require('../loaders/mongodb')
+const { ObjectId } = require("mongodb");
+const { InitiateDatabase } = require("../loaders/mongodb");
 
 module.exports = class User {
-    constructor(email, password){
-        this.email = email
-        this.password = password
-    }
+  constructor(email, password) {
+    this.email = email;
+    this.password = password;
+  }
 
-    save(){
-        const dbo = InitiateDatabase()
-        return dbo.collection('users').insertOne(this)
-    }
-}
+  save() {
+    const dbo = InitiateDatabase();
+    dbo.collection("users").createIndex({ email: 1 }, { unique: true });
+    return dbo.collection("users").insertOne(this);
+  }
+
+  static find(email) {
+    const dbo = InitiateDatabase();
+    return dbo.collection("users").findOne({ email: email });
+  }
+};
